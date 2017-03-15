@@ -1,7 +1,7 @@
 '
 '  ------------------------------------------------------------------------
 '  fusioninventory-agent-deployment.vbs
-'  Copyright (C) 2010-2013 by the FusionInventory Development Team.
+'  Copyright (C) 2010-2017 by the FusionInventory Development Team.
 '
 '  http://www.fusioninventory.org/ http://forge.fusioninventory.org/
 '  ------------------------------------------------------------------------
@@ -34,7 +34,8 @@
 '             Christophe Pujol <chpujol@gmail.com>
 '             Marc Caissial <marc.caissial@zenitique.fr>
 '             Tomas Abad <tabadgp@gmail.com>
-'  @copyright Copyright (c) 2010-2013 FusionInventory Team
+'             Wanderlei Hüttel <wanderlei.huttel@gmail.com>
+'  @copyright Copyright (c) 2010-2017 FusionInventory Team
 '  @license   GNU GPL version 2 or (at your option) any later version
 '             http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
 '  @link      http://www.fusioninventory.org/
@@ -64,7 +65,7 @@ Dim Setup, SetupArchitecture, SetupLocation, SetupOptions, SetupVersion
 ' SetupVersion
 '    Setup version with the pattern <major>.<minor>.<release>[-<package>]
 '
-SetupVersion = "2.3.18"
+SetupVersion = "2.3.19"
 
 ' SetupLocation
 '    Depending on your needs or your environment, you can use either a HTTP or
@@ -82,7 +83,8 @@ SetupVersion = "2.3.18"
 '       You also must be sure that you have removed the "Open File Security Warning"
 '       from programs accessed from that UNC.
 '
-SetupLocation = "https://github.com/tabad/fusioninventory-agent-windows-installer/releases/download/" & SetupVersion
+'SetupLocation = "\\servidor\instalacoes\FusionInventory"
+SetupLocation = "https://github.com/fusioninventory/fusioninventory-agent/releases/download/" & SetupVersion
 
 
 ' SetupArchitecture
@@ -99,6 +101,7 @@ SetupArchitecture = "Auto"
 '    You should use simple quotes (') to set between quotation marks those values
 '    that require it; double quotes (") doesn't work with UNCs.
 '
+'SetupOptions = "/acceptlicense /runnow /server='http://192.168.1.1/glpi/plugins/fusioninventory/' /S /tag=YourTag /delaytime=60 /httpd-trust='127.0.0.1/32,192.168.1.0/24' /execmode=service"
 SetupOptions = "/acceptlicense /runnow /server='http://glpi.yourcompany.com/glpi/plugins/fusioninventory/' /S"
 
 ' Setup
@@ -406,8 +409,12 @@ If IsSelectedForce() Or IsInstallationNeeded(SetupVersion, SetupArchitecture, st
          ShowMessage("Error downloading '" & SetupLocation & "\" & Setup & "'!")
       End If
    Else
-      ShowMessage("Running: """ & SetupLocation & "\" & Setup & """ " & SetupOptions)
-      WshShell.Run "CMD.EXE /C """ & SetupLocation & "\" & Setup & """ " & SetupOptions, 0, True
+      Set objFSO = CreateObject("Scripting.FileSystemObject")
+      strTempDir = WshShell.ExpandEnvironmentStrings("%TEMP%")
+      ShowMessage("Copying: " & SetupLocation & "\" & Setup & " to " & strTempDir & "\" & Setup)
+      objFSO.CopyFile SetupLocation & "\" & Setup, strTempDir & "\" & Setup, true
+      ShowMessage("Running: """ & strTempDir & "\" & Setup & """ " & SetupOptions)
+      WshShell.Run "CMD.EXE /C """ & strTempDir & "\" & Setup & """ " & SetupOptions, 0, True
       ShowMessage("Deployment done!")
    End If
 Else

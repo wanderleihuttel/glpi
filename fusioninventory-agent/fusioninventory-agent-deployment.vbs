@@ -101,7 +101,7 @@ SetupArchitecture = "Auto"
 '    You should use simple quotes (') to set between quotation marks those values
 '    that require it; double quotes (") doesn't work with UNCs.
 '
-'SetupOptions = "/acceptlicense /runnow /server='http://192.168.1.1/glpi/plugins/fusioninventory/' /S /tag=YourTag /delaytime=60 /httpd-trust='127.0.0.1/32,192.168.1.0/24' /execmode=service"
+'SetupOptions = "/acceptlicense /server='http://192.168.1.1/glpi/plugins/fusioninventory/' /tag=YourTag /delaytime=60 /httpd-trust='127.0.0.1/32,192.168.1.0/24' /execmode=service /installtasks=full /runnow /S"
 SetupOptions = "/acceptlicense /runnow /server='http://glpi.yourcompany.com/glpi/plugins/fusioninventory/' /S"
 
 ' Setup
@@ -348,7 +348,7 @@ End Function
 '
 '
 
-Dim nMinutesToAdvance, strCmd, strSystemArchitecture, strTempDir, WshShell
+Dim nMinutesToAdvance, strCmd, strSystemArchitecture, strTempDir, WshShell, objFSO
 Set WshShell = WScript.CreateObject("WScript.shell")
 
 nMinutesToAdvance = 5

@@ -1,0 +1,5 @@
+# Get all users ignoring disabled users
+(&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))
+
+# Get all users from some specif group like Group_GLPI and ignore disabled users
+(&(!(userAccountControl:1.2.840.113556.1.4.803:=2))(memberof=CN=Group_GLPI,OU=Grupos,DC=domain,DC=local))
